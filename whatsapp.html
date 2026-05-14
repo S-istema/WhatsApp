@@ -1,399 +1,386 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZapChat - Mensageiro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WhatsApp Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ==================== AUTH SCREEN ==================== -->
-    <div class="auth-container" id="authScreen">
-        <!-- Login Form -->
-        <div class="auth-box" id="loginForm">
-            <div class="auth-logo">
-                <i class="fab fa-whatsapp"></i>
-                <h1>ZapChat</h1>
-                <p>Entre para continuar</p>
-            </div>
-            <div class="auth-error" id="loginError"></div>
-            <div class="auth-success" id="loginSuccess"></div>
-            <div class="form-group">
-                <label>Número de telefone</label>
-                <input type="tel" id="loginPhone" placeholder="+55 11 99999-9999" autocomplete="tel">
-            </div>
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="loginPassword" placeholder="Digite sua senha" autocomplete="current-password">
-            </div>
-            <button class="auth-btn" id="loginBtn" onclick="handleLogin()">
-                Entrar
-            </button>
-            <div class="auth-switch">
-                Não tem conta? <a onclick="showRegister()">Cadastre-se</a>
-            </div>
-        </div>
+<!-- SPLASH -->
+<div class="splash" id="splash">
+    <div class="splash-inner">
+        <i class="fab fa-whatsapp"></i>
+        <div class="spin"></div>
+        <p id="splashTxt">Iniciando...</p>
+    </div>
+</div>
 
-        <!-- Register Form -->
-        <div class="auth-box" id="registerForm" style="display:none">
+<!-- AUTH -->
+<div id="authScreen" style="display:none">
+    <!-- LOGIN -->
+    <div class="auth-wrap" id="loginWrap">
+        <div class="auth-box">
             <div class="auth-logo">
                 <i class="fab fa-whatsapp"></i>
                 <h1>ZapChat</h1>
-                <p>Crie sua conta</p>
+                <p>Entre na sua conta</p>
             </div>
-            <div class="auth-error" id="registerError"></div>
-            <div class="form-group">
-                <label>Nome</label>
-                <input type="text" id="regName" placeholder="Seu nome completo">
-            </div>
-            <div class="form-group">
-                <label>Número de telefone</label>
-                <input type="tel" id="regPhone" placeholder="+55 11 99999-9999">
-            </div>
-            <div class="form-group">
-                <label>Recado</label>
-                <input type="text" id="regAbout" placeholder="Disponível" value="Disponível">
-            </div>
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres">
-            </div>
-            <div class="form-group">
-                <label>Confirmar senha</label>
-                <input type="password" id="regPasswordConfirm" placeholder="Repita a senha">
-            </div>
-            <button class="auth-btn" onclick="handleRegister()">
-                Cadastrar
-            </button>
-            <div class="auth-switch">
-                Já tem conta? <a onclick="showLogin()">Fazer login</a>
-            </div>
+            <div class="msg-err" id="loginErr" style="display:none"></div>
+            <div class="msg-ok" id="loginOk" style="display:none"></div>
+            <form id="loginForm">
+                <div class="fld">
+                    <label>Telefone</label>
+                    <input type="tel" id="lPhone" placeholder="Ex: 11999998888" autocomplete="tel">
+                </div>
+                <div class="fld">
+                    <label>Senha</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="lPass" placeholder="Sua senha" autocomplete="current-password">
+                        <button type="button" class="pw-eye" onclick="togglePw('lPass',this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-green">Entrar</button>
+            </form>
+            <p class="auth-sw">Não tem conta? <span onclick="showReg()">Cadastre-se</span></p>
         </div>
     </div>
-
-    <!-- ==================== MAIN APP ==================== -->
-    <div class="app-container" id="appScreen">
-        <div class="app-wrapper">
-            <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <!-- Profile Panel (hidden by default) -->
-                <div class="profile-panel" id="profilePanel">
-                    <div class="profile-header">
-                        <button onclick="closeProfile()"><i class="fas fa-arrow-left"></i></button>
-                        <h3>Perfil</h3>
-                    </div>
-                    <div class="profile-body">
-                        <div class="profile-avatar-section">
-                            <div class="profile-avatar-large" id="profileAvatarLarge">
-                                <i class="fas fa-user"></i>
-                            </div>
-                        </div>
-                        <div class="profile-info-section">
-                            <div class="profile-info-label">Seu nome</div>
-                            <div class="profile-info-edit">
-                                <input type="text" id="profileNameInput" value="">
-                                <button onclick="updateProfileName()"><i class="fas fa-check"></i></button>
-                            </div>
-                        </div>
-                        <div class="profile-info-section">
-                            <div class="profile-info-label">Recado</div>
-                            <div class="profile-info-edit">
-                                <input type="text" id="profileAboutInput" value="">
-                                <button onclick="updateProfileAbout()"><i class="fas fa-check"></i></button>
-                            </div>
-                        </div>
-                        <div class="profile-info-section">
-                            <div class="profile-info-label">Telefone</div>
-                            <div class="profile-info-value" id="profilePhone"></div>
-                        </div>
+    <!-- REGISTER -->
+    <div class="auth-wrap" id="regWrap" style="display:none">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <i class="fab fa-whatsapp"></i>
+                <h1>ZapChat</h1>
+                <p>Criar nova conta</p>
+            </div>
+            <div class="msg-err" id="regErr" style="display:none"></div>
+            <form id="regForm">
+                <div class="fld">
+                    <label>Nome completo</label>
+                    <input type="text" id="rName" placeholder="Seu nome" autocomplete="name">
+                </div>
+                <div class="fld">
+                    <label>Telefone</label>
+                    <input type="tel" id="rPhone" placeholder="Ex: 11999998888" autocomplete="tel">
+                </div>
+                <div class="fld">
+                    <label>Recado</label>
+                    <input type="text" id="rAbout" value="Disponível">
+                </div>
+                <div class="fld">
+                    <label>Senha (mínimo 6 caracteres)</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="rPass" placeholder="Crie uma senha" minlength="6">
+                        <button type="button" class="pw-eye" onclick="togglePw('rPass',this)"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
-
-                <!-- Sidebar Header -->
-                <div class="sidebar-header">
-                    <div class="user-avatar" id="myAvatar" onclick="openProfile()">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="header-actions">
-                        <button onclick="toggleStatusView()" title="Status">
-                            <i class="fas fa-circle-notch"></i>
-                        </button>
-                        <button onclick="openNewChat()" title="Nova conversa">
-                            <i class="fas fa-comment-medical"></i>
-                        </button>
-                        <button onclick="openNewGroup()" title="Novo grupo">
-                            <i class="fas fa-users"></i>
-                        </button>
-                        <button id="menuBtn" onclick="toggleMainMenu()" title="Menu">
-                            <i class="fas fa-ellipsis-vertical"></i>
-                        </button>
-                    </div>
-                    <!-- Main Dropdown -->
-                    <div class="dropdown-menu" id="mainMenu">
-                        <div class="dropdown-item" onclick="openNewGroup()">Novo grupo</div>
-                        <div class="dropdown-item" onclick="showStarredMessages()">Mensagens favoritas</div>
-                        <div class="dropdown-item" onclick="openSettings()">Configurações</div>
-                        <div class="dropdown-item danger" onclick="handleLogout()">Sair</div>
-                    </div>
+                <div class="fld">
+                    <label>Confirmar senha</label>
+                    <input type="password" id="rPass2" placeholder="Repita a senha">
                 </div>
+                <button type="submit" class="btn-green">Cadastrar</button>
+            </form>
+            <p class="auth-sw">Já tem conta? <span onclick="showLogin()">Entrar</span></p>
+        </div>
+    </div>
+</div>
 
-                <!-- Search -->
-                <div class="search-container">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Pesquisar ou começar uma nova conversa" id="searchInput" oninput="handleSearch(this.value)">
+<!-- APP -->
+<div id="appScreen" style="display:none">
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+
+            <!-- Painel de Perfil -->
+            <div class="slide-panel" id="pfPanel">
+                <div class="slide-hd">
+                    <button onclick="closePanel('pfPanel')"><i class="fas fa-arrow-left"></i></button>
+                    <span>Perfil</span>
+                </div>
+                <div class="slide-bd">
+                    <div class="big-av-wrap">
+                        <div class="big-av" id="pfAvatar"></div>
+                        <button class="cam-btn" onclick="document.getElementById('avFile').click()">
+                            <i class="fas fa-camera"></i>
+                        </button>
                     </div>
-                </div>
-
-                <!-- Filter Tabs -->
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterChats('all', this)">Todas</button>
-                    <button class="filter-tab" onclick="filterChats('unread', this)">Não lidas</button>
-                    <button class="filter-tab" onclick="filterChats('groups', this)">Grupos</button>
-                </div>
-
-                <!-- Chat List -->
-                <div class="chat-list" id="chatList">
-                    <!-- Populated dynamically -->
+                    <div class="pf-row">
+                        <label>Nome</label>
+                        <div class="pf-edit-row">
+                            <input id="pfName" type="text">
+                            <button onclick="saveProfile('name')"><i class="fas fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="pf-row">
+                        <label>Recado</label>
+                        <div class="pf-edit-row">
+                            <input id="pfAbout" type="text">
+                            <button onclick="saveProfile('about')"><i class="fas fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="pf-row">
+                        <label>Telefone</label>
+                        <div id="pfPhone" class="pf-val"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Chat Area -->
-            <div class="chat-area" id="chatArea">
-                <!-- Empty State -->
-                <div class="empty-chat" id="emptyChat">
-                    <i class="fab fa-whatsapp"></i>
-                    <h2>ZapChat Web</h2>
-                    <p>Envie e receba mensagens. Selecione uma conversa para começar ou inicie uma nova.</p>
+            <!-- Header da sidebar -->
+            <div class="sb-hd">
+                <div id="myAv" class="my-av" onclick="openProfile()"></div>
+                <div class="sb-btns">
+                    <button title="Nova conversa" onclick="openNewChat()"><i class="fas fa-message"></i></button>
+                    <button title="Novo grupo" onclick="openNewGroup()"><i class="fas fa-users"></i></button>
+                    <button title="Menu" onclick="toggleDrop('mainDrop',event)"><i class="fas fa-ellipsis-vertical"></i></button>
+                </div>
+                <div class="drop" id="mainDrop" style="display:none">
+                    <div onclick="openNewGroup()"><i class="fas fa-users"></i>Novo grupo</div>
+                    <div onclick="openProfile()"><i class="fas fa-gear"></i>Configurações</div>
+                    <div onclick="doLogout()" class="drop-danger"><i class="fas fa-right-from-bracket"></i>Sair</div>
+                </div>
+            </div>
+
+            <!-- Busca -->
+            <div class="sb-search">
+                <div class="search-inp">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input type="text" id="srchInput" placeholder="Pesquisar..." oninput="doSearch(this.value)">
+                    <button id="srchClear" style="display:none" onclick="clearSearch()"><i class="fas fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="sb-tabs">
+                <button class="stab active" data-f="all" onclick="setFilter('all',this)">Todas</button>
+                <button class="stab" data-f="unread" onclick="setFilter('unread',this)">Não lidas</button>
+                <button class="stab" data-f="groups" onclick="setFilter('groups',this)">Grupos</button>
+            </div>
+
+            <!-- Lista de chats -->
+            <div class="chat-list" id="chatList"></div>
+        </div>
+
+        <!-- ÁREA PRINCIPAL -->
+        <div class="main-area" id="mainArea">
+
+            <!-- Estado vazio -->
+            <div class="empty-state" id="emptyState">
+                <i class="fab fa-whatsapp"></i>
+                <h2>ZapChat Web</h2>
+                <p>Envie e receba mensagens em tempo real.<br>Selecione uma conversa ou inicie uma nova.</p>
+                <button onclick="openNewChat()"><i class="fas fa-message"></i> Nova conversa</button>
+            </div>
+
+            <!-- Chat ativo -->
+            <div class="chat-screen" id="chatScreen" style="display:none">
+
+                <!-- Header do chat -->
+                <div class="chat-hd">
+                    <button class="back-mob" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
+                    <div id="chatHdAv" class="chat-av" onclick="openInfo()"></div>
+                    <div class="chat-hd-info" onclick="openInfo()">
+                        <div id="chatHdName" class="chat-hd-name"></div>
+                        <div id="chatHdSt" class="chat-hd-st"></div>
+                    </div>
+                    <div class="chat-hd-btns">
+                        <button onclick="openSearchInChat()"><i class="fas fa-magnifying-glass"></i></button>
+                        <button onclick="toggleDrop('chatDrop',event)"><i class="fas fa-ellipsis-vertical"></i></button>
+                    </div>
+                    <div class="drop" id="chatDrop" style="display:none">
+                        <div onclick="openInfo()"><i class="fas fa-circle-info"></i>Info</div>
+                        <div onclick="muteChat()"><i class="fas fa-bell-slash"></i>Silenciar</div>
+                        <div onclick="clearChatMsgs()"><i class="fas fa-broom"></i>Limpar</div>
+                        <div onclick="deleteCurrentChat()" class="drop-danger"><i class="fas fa-trash"></i>Apagar</div>
+                    </div>
                 </div>
 
-                <!-- Active Chat -->
-                <div id="activeChat" style="display:none;flex-direction:column;height:100%;">
-                    <!-- Chat Header -->
-                    <div class="chat-header">
-                        <button class="back-btn" onclick="closeChat()">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <div class="chat-header-avatar" id="chatAvatar" onclick="openContactInfo()">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="chat-header-info" onclick="openContactInfo()">
-                            <div class="chat-header-name" id="chatName"></div>
-                            <div class="chat-header-status" id="chatStatus"></div>
-                        </div>
-                        <div class="chat-header-actions">
-                            <button onclick="searchInChat()" title="Pesquisar"><i class="fas fa-search"></i></button>
-                            <button onclick="toggleChatMenu()" title="Menu"><i class="fas fa-ellipsis-vertical"></i></button>
-                        </div>
-                        <!-- Chat Dropdown -->
-                        <div class="dropdown-menu" id="chatMenu">
-                            <div class="dropdown-item" onclick="openContactInfo()">Info do contato</div>
-                            <div class="dropdown-item" onclick="selectMessages()">Selecionar mensagens</div>
-                            <div class="dropdown-item" onclick="muteChat()">Silenciar notificações</div>
-                            <div class="dropdown-item" onclick="clearChat()">Limpar conversa</div>
-                            <div class="dropdown-item danger" onclick="deleteChat()">Apagar conversa</div>
-                        </div>
-                    </div>
+                <!-- Barra de busca no chat -->
+                <div class="in-chat-search" id="inChatSearch" style="display:none">
+                    <input type="text" id="chatSrchIn" placeholder="Pesquisar na conversa..." oninput="searchInsideChat(this.value)">
+                    <span id="chatSrchInfo"></span>
+                    <button onclick="closeSearchInChat()"><i class="fas fa-xmark"></i></button>
+                </div>
 
-                    <!-- Messages -->
-                    <div class="chat-messages" id="chatMessages">
-                        <!-- Messages populated dynamically -->
-                    </div>
+                <!-- Mensagens -->
+                <div class="msgs-box" id="msgsBox"></div>
 
-                    <!-- Scroll to bottom -->
-                    <button class="scroll-bottom-btn" id="scrollBottomBtn" onclick="scrollToBottom()">
-                        <i class="fas fa-chevron-down"></i>
+                <!-- Botão scroll -->
+                <button class="scroll-dn" id="scrollDn" onclick="scrollToBottom(true)" style="display:none">
+                    <i class="fas fa-chevron-down"></i>
+                    <span class="scroll-badge" id="scrollBadge" style="display:none"></span>
+                </button>
+
+                <!-- Barra de resposta -->
+                <div class="reply-strip" id="replyStrip" style="display:none">
+                    <div class="reply-content">
+                        <b id="replyWho"></b>
+                        <span id="replyWhat"></span>
+                    </div>
+                    <button onclick="cancelReply()"><i class="fas fa-xmark"></i></button>
+                </div>
+
+                <!-- Input -->
+                <div class="input-strip">
+                    <button class="in-icon" onclick="toggleEmoji()"><i class="far fa-face-smile"></i></button>
+                    <button class="in-icon" onclick="toggleAttach()"><i class="fas fa-paperclip"></i></button>
+                    <div class="txt-area">
+                        <textarea id="msgTxt" placeholder="Mensagem" rows="1"
+                            oninput="onMsgInput(this)"
+                            onkeydown="onMsgKey(event)"></textarea>
+                    </div>
+                    <button class="in-icon send-icon" id="sendBtn" onclick="sendMsg()">
+                        <i class="fas fa-microphone" id="sendIco"></i>
                     </button>
+                </div>
 
-                    <!-- Reply Bar -->
-                    <div class="reply-bar" id="replyBar">
-                        <div class="reply-name" id="replyName"></div>
-                        <div class="reply-text" id="replyText"></div>
-                        <button class="close-reply" onclick="cancelReply()">
-                            <i class="fas fa-times"></i>
-                        </button>
+                <!-- Emoji Picker -->
+                <div class="emoji-picker" id="emojiPicker" style="display:none">
+                    <div class="ep-search">
+                        <input type="text" placeholder="Pesquisar emoji..." oninput="searchEmojis(this.value)">
                     </div>
-
-                    <!-- Input Area -->
-                    <div class="chat-input-area">
-                        <button class="emoji-btn" onclick="toggleEmojiPicker()">
-                            <i class="far fa-face-smile"></i>
-                        </button>
-                        <button class="attach-btn" onclick="toggleAttachMenu()">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                        <div class="message-input-wrapper" id="inputWrapper">
-                            <textarea class="message-input" id="messageInput" placeholder="Mensagem" rows="1" oninput="autoResize(this)" onkeydown="handleInputKeydown(event)"></textarea>
-                        </div>
-                        <div class="recording-ui" id="recordingUI">
-                            <div class="recording-indicator"></div>
-                            <span class="recording-time" id="recordingTime">0:00</span>
-                            <span class="recording-cancel">← Deslize para cancelar</span>
-                        </div>
-                        <button class="send-btn" id="sendBtn" onclick="handleSend()">
-                            <i class="fas fa-microphone" id="sendIcon"></i>
-                        </button>
+                    <div class="ep-tabs" id="epTabs">
+                        <button class="ep-tab active" onclick="showEmojiCat('smileys',this)">😀</button>
+                        <button class="ep-tab" onclick="showEmojiCat('people',this)">👋</button>
+                        <button class="ep-tab" onclick="showEmojiCat('animals',this)">🐶</button>
+                        <button class="ep-tab" onclick="showEmojiCat('food',this)">🍔</button>
+                        <button class="ep-tab" onclick="showEmojiCat('travel',this)">✈️</button>
+                        <button class="ep-tab" onclick="showEmojiCat('objects',this)">💡</button>
+                        <button class="ep-tab" onclick="showEmojiCat('symbols',this)">❤️</button>
                     </div>
+                    <div class="ep-grid" id="epGrid"></div>
+                </div>
 
-                    <!-- Emoji Picker -->
-                    <div class="emoji-picker" id="emojiPicker">
-                        <div class="emoji-search">
-                            <input type="text" placeholder="Pesquisar emoji" oninput="searchEmoji(this.value)">
-                        </div>
-                        <div class="emoji-categories">
-                            <button class="emoji-cat-btn active" onclick="showEmojiCategory('smileys', this)">😀</button>
-                            <button class="emoji-cat-btn" onclick="showEmojiCategory('people', this)">👋</button>
-                            <button class="emoji-cat-btn" onclick="showEmojiCategory('animals', this)">🐶</button>
-                            <button class="emoji-cat-btn" onclick="showEmojiCategory('food', this)">🍔</button>
-                            <button class="emoji-cat-btn" onclick="showEmojiCategory('activities', this)">⚽</button>
-                            <button class="emoji-cat-btn" onclick="showEmojiCategory('objects', this)">💡</button>
-                            <button class="emoji-cat-btn" onclick="showEmojiCategory('symbols', this)">❤️</button>
-                        </div>
-                        <div class="emoji-grid" id="emojiGrid">
-                            <!-- Emojis populated dynamically -->
-                        </div>
+                <!-- Attach Menu -->
+                <div class="attach-menu" id="attachMenu" style="display:none">
+                    <div class="att-item" onclick="pickPhoto()">
+                        <div class="att-ico" style="background:#7c5cfc"><i class="fas fa-image"></i></div>
+                        <span>Fotos</span>
                     </div>
-
-                    <!-- Attachment Menu -->
-                    <div class="attach-menu" id="attachMenu">
-                        <div class="attach-option" onclick="attachDocument()">
-                            <div class="icon-circle icon-purple"><i class="fas fa-file"></i></div>
-                            <span>Documento</span>
-                        </div>
-                        <div class="attach-option" onclick="attachPhoto()">
-                            <div class="icon-circle icon-blue"><i class="fas fa-image"></i></div>
-                            <span>Fotos e vídeos</span>
-                        </div>
-                        <div class="attach-option" onclick="attachCamera()">
-                            <div class="icon-circle icon-pink"><i class="fas fa-camera"></i></div>
-                            <span>Câmera</span>
-                        </div>
-                        <div class="attach-option" onclick="attachContact()">
-                            <div class="icon-circle icon-blue"><i class="fas fa-user"></i></div>
-                            <span>Contato</span>
-                        </div>
-                        <div class="attach-option" onclick="attachLocation()">
-                            <div class="icon-circle icon-green"><i class="fas fa-location-dot"></i></div>
-                            <span>Localização</span>
-                        </div>
+                    <div class="att-item" onclick="pickDoc()">
+                        <div class="att-ico" style="background:#5157ae"><i class="fas fa-file"></i></div>
+                        <span>Documento</span>
+                    </div>
+                    <div class="att-item" onclick="sendLocation()">
+                        <div class="att-ico" style="background:#1fa855"><i class="fas fa-location-dot"></i></div>
+                        <span>Localização</span>
+                    </div>
+                    <div class="att-item" onclick="pickPhoto()">
+                        <div class="att-ico" style="background:#0795dc"><i class="fas fa-camera"></i></div>
+                        <span>Câmera</span>
                     </div>
                 </div>
 
-                <!-- Contact Info Panel -->
-                <div class="contact-panel" id="contactPanel">
-                    <div class="profile-header">
-                        <button onclick="closeContactInfo()"><i class="fas fa-xmark"></i></button>
-                        <h3>Info do contato</h3>
+                <!-- Painel Info -->
+                <div class="info-panel" id="infoPanel" style="display:none">
+                    <div class="slide-hd">
+                        <button onclick="closeInfo()"><i class="fas fa-xmark"></i></button>
+                        <span id="infoTitle">Info</span>
                     </div>
-                    <div class="profile-body">
-                        <div class="profile-avatar-section">
-                            <div class="profile-avatar-large" id="contactAvatarLarge">
-                                <i class="fas fa-user"></i>
-                            </div>
+                    <div class="slide-bd">
+                        <div class="big-av-wrap">
+                            <div class="big-av" id="infoAv"></div>
                         </div>
-                        <div class="profile-info-section" style="text-align:center">
-                            <div class="profile-info-value" id="contactInfoName" style="font-size:22px;font-weight:500;"></div>
-                            <div style="color:var(--text-secondary);margin-top:4px" id="contactInfoPhone"></div>
+                        <div class="info-nm" id="infoNm"></div>
+                        <div class="info-ph" id="infoPh"></div>
+                        <div class="pf-row">
+                            <label>Recado</label>
+                            <div class="pf-val" id="infoAb"></div>
                         </div>
-                        <div class="profile-info-section">
-                            <div class="profile-info-label">Recado</div>
-                            <div class="profile-info-value" id="contactInfoAbout"></div>
-                        </div>
-                        <div class="profile-info-section">
-                            <div class="dropdown-item danger" onclick="blockContact()" style="padding:0;font-size:16px;">
-                                <i class="fas fa-ban"></i> Bloquear contato
-                            </div>
-                        </div>
-                        <div class="profile-info-section">
-                            <div class="dropdown-item danger" onclick="deleteChat()" style="padding:0;font-size:16px;">
-                                <i class="fas fa-trash"></i> Apagar conversa
-                            </div>
-                        </div>
+                        <button class="danger-btn" onclick="deleteCurrentChat()">
+                            <i class="fas fa-trash"></i> Apagar conversa
+                        </button>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ==================== NEW CHAT MODAL ==================== -->
-    <div class="modal-overlay" id="newChatModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-comment-medical"></i> Nova conversa</h3>
-            <div class="form-group">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Buscar contato por telefone ou nome" id="newChatSearch" oninput="searchContacts(this.value)">
+<!-- MODAIS -->
+<!-- Nova Conversa -->
+<div class="modal-bg" id="newChatMod" style="display:none">
+    <div class="modal-box">
+        <div class="modal-hd">
+            <h3><i class="fas fa-message"></i> Nova Conversa</h3>
+            <button onclick="closeModal('newChatMod')"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-bd">
+            <div class="search-inp" style="margin-bottom:12px">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar por nome ou telefone..." oninput="filterContacts(this.value)" id="contactSrch">
+            </div>
+            <div class="clist" id="contactList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Novo Grupo -->
+<div class="modal-bg" id="newGroupMod" style="display:none">
+    <div class="modal-box">
+        <div class="modal-hd">
+            <h3><i class="fas fa-users"></i> Novo Grupo</h3>
+            <button onclick="closeModal('newGroupMod')"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-bd">
+            <div class="fld"><label>Nome do grupo *</label><input type="text" id="grpNm" placeholder="Nome do grupo"></div>
+            <div class="fld"><label>Descrição</label><input type="text" id="grpDesc" placeholder="Opcional"></div>
+            <div class="fld">
+                <label>Participantes</label>
+                <div class="search-inp">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Buscar contatos..." oninput="filterGrpContacts(this.value)">
                 </div>
             </div>
-            <div id="contactResults" style="max-height:300px;overflow-y:auto;">
-                <!-- Contact results -->
-            </div>
-            <div style="text-align:center;margin-top:16px">
-                <button class="auth-btn" style="width:auto;padding:10px 30px;background:var(--border-color)" onclick="closeNewChat()">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== NEW GROUP MODAL ==================== -->
-    <div class="modal-overlay" id="newGroupModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-users"></i> Novo grupo</h3>
-            <div class="form-group">
-                <label>Nome do grupo</label>
-                <input type="text" id="groupName" placeholder="Nome do grupo">
-            </div>
-            <div class="form-group">
-                <label>Descrição</label>
-                <input type="text" id="groupDesc" placeholder="Descrição do grupo (opcional)">
-            </div>
-            <div class="form-group">
-                <label>Adicionar participantes</label>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Buscar contatos" id="groupContactSearch" oninput="searchGroupContacts(this.value)">
-                </div>
-            </div>
-            <div class="selected-contacts" id="selectedGroupContacts"></div>
-            <div id="groupContactResults" style="max-height:200px;overflow-y:auto;"></div>
-            <div style="display:flex;gap:10px;margin-top:16px;">
-                <button class="auth-btn" style="background:var(--border-color)" onclick="closeNewGroup()">Cancelar</button>
-                <button class="auth-btn" onclick="createGroup()">Criar grupo</button>
+            <div class="chips-area" id="grpChips"></div>
+            <div class="clist" id="grpContactList"></div>
+            <div class="modal-ft">
+                <button class="btn-gray" onclick="closeModal('newGroupMod')">Cancelar</button>
+                <button class="btn-green" onclick="createGroup()">Criar Grupo</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ==================== IMAGE VIEWER ==================== -->
-    <div class="image-viewer" id="imageViewer">
-        <button class="close-viewer" onclick="closeImageViewer()"><i class="fas fa-times"></i></button>
-        <img id="viewerImage" src="">
-    </div>
-
-    <!-- ==================== CONTEXT MENU ==================== -->
-    <div class="context-menu" id="contextMenu">
-        <div class="context-menu-item" onclick="replyToMessage()"><i class="fas fa-reply"></i> Responder</div>
-        <div class="context-menu-item" onclick="forwardMessage()"><i class="fas fa-share"></i> Encaminhar</div>
-        <div class="context-menu-item" onclick="copyMessage()"><i class="fas fa-copy"></i> Copiar</div>
-        <div class="context-menu-item" onclick="starMessage()"><i class="fas fa-star"></i> Favoritar</div>
-        <div class="context-menu-item danger" onclick="deleteMessage()"><i class="fas fa-trash"></i> Apagar</div>
-    </div>
-
-    <!-- ==================== TOAST CONTAINER ==================== -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- ==================== LOADING OVERLAY ==================== -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-box">
-            <div class="loading-spinner"></div>
-            <p id="loadingText">Carregando...</p>
+<!-- Encaminhar -->
+<div class="modal-bg" id="fwdMod" style="display:none">
+    <div class="modal-box">
+        <div class="modal-hd">
+            <h3><i class="fas fa-share"></i> Encaminhar para...</h3>
+            <button onclick="closeModal('fwdMod')"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-bd">
+            <div class="clist" id="fwdList"></div>
         </div>
     </div>
+</div>
 
-    <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="handleFileSelect(event)">
-    <input type="file" id="docInput" style="display:none" onchange="handleDocSelect(event)">
+<!-- Menu de Contexto -->
+<div class="ctx-menu" id="ctxMenu" style="display:none">
+    <div onclick="replyMsg()"><i class="fas fa-reply"></i> Responder</div>
+    <div onclick="copyMsg()"><i class="fas fa-copy"></i> Copiar</div>
+    <div onclick="fwdMsg()"><i class="fas fa-share"></i> Encaminhar</div>
+    <div onclick="starMsg()"><i class="fas fa-star"></i> Favoritar</div>
+    <div onclick="deleteMsg()" class="ctx-danger"><i class="fas fa-trash"></i> Apagar</div>
+</div>
 
-    <script src="script.js"></script>
+<!-- Visualizador de imagem -->
+<div class="img-viewer" id="imgViewer" style="display:none">
+    <button onclick="closeViewer()"><i class="fas fa-xmark"></i></button>
+    <img id="viewerImg" src="">
+</div>
+
+<!-- Notificações -->
+<div class="toast-area" id="toastArea"></div>
+
+<!-- Inputs ocultos -->
+<input type="file" id="imgFile" accept="image/*" style="display:none" onchange="handleImgFile(event)">
+<input type="file" id="docFile" style="display:none" onchange="handleDocFile(event)">
+<input type="file" id="avFile" accept="image/*" style="display:none" onchange="handleAvFile(event)">
+
+<script src="script.js"></script>
 </body>
 </html>
