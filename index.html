@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WhatsApp Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+    <div class="splash-inner">
+        <i class="fab fa-whatsapp"></i>
+        <div class="spin"></div>
+        <p id="splashTxt">Iniciando...</p>
+    </div>
+</div>
+
+<!-- AUTH -->
+<div id="authScreen" style="display:none">
+    <!-- LOGIN -->
+    <div class="auth-wrap" id="loginWrap">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <i class="fab fa-whatsapp"></i>
+                <h1>ZapChat</h1>
+                <p>Entre na sua conta</p>
+            </div>
+            <div class="msg-err" id="loginErr" style="display:none"></div>
+            <div class="msg-ok" id="loginOk" style="display:none"></div>
+            <form id="loginForm">
+                <div class="fld">
+                    <label>Telefone</label>
+                    <input type="tel" id="lPhone" placeholder="Ex: 11999998888" autocomplete="tel">
+                </div>
+                <div class="fld">
+                    <label>Senha</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="lPass" placeholder="Sua senha" autocomplete="current-password">
+                        <button type="button" class="pw-eye" onclick="togglePw('lPass',this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-green">Entrar</button>
+            </form>
+            <p class="auth-sw">Não tem conta? <span onclick="showReg()">Cadastre-se</span></p>
+        </div>
+    </div>
+    <!-- REGISTER -->
+    <div class="auth-wrap" id="regWrap" style="display:none">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <i class="fab fa-whatsapp"></i>
+                <h1>ZapChat</h1>
+                <p>Criar nova conta</p>
+            </div>
+            <div class="msg-err" id="regErr" style="display:none"></div>
+            <form id="regForm">
+                <div class="fld">
+                    <label>Nome completo</label>
+                    <input type="text" id="rName" placeholder="Seu nome" autocomplete="name">
+                </div>
+                <div class="fld">
+                    <label>Telefone</label>
+                    <input type="tel" id="rPhone" placeholder="Ex: 11999998888" autocomplete="tel">
+                </div>
+                <div class="fld">
+                    <label>Recado</label>
+                    <input type="text" id="rAbout" value="Disponível">
+                </div>
+                <div class="fld">
+                    <label>Senha (mínimo 6 caracteres)</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="rPass" placeholder="Crie uma senha" minlength="6">
+                        <button type="button" class="pw-eye" onclick="togglePw('rPass',this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="fld">
+                    <label>Confirmar senha</label>
+                    <input type="password" id="rPass2" placeholder="Repita a senha">
+                </div>
+                <button type="submit" class="btn-green">Cadastrar</button>
+            </form>
+            <p class="auth-sw">Já tem conta? <span onclick="showLogin()">Entrar</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="appScreen" style="display:none">
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+
+            <!-- Painel de Perfil -->
+            <div class="slide-panel" id="pfPanel">
+                <div class="slide-hd">
+                    <button onclick="closePanel('pfPanel')"><i class="fas fa-arrow-left"></i></button>
+                    <span>Perfil</span>
+                </div>
+                <div class="slide-bd">
+                    <div class="big-av-wrap">
+                        <div class="big-av" id="pfAvatar"></div>
+                        <button class="cam-btn" onclick="document.getElementById('avFile').click()">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <div class="pf-row">
+                        <label>Nome</label>
+                        <div class="pf-edit-row">
+                            <input id="pfName" type="text">
+                            <button onclick="saveProfile('name')"><i class="fas fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="pf-row">
+                        <label>Recado</label>
+                        <div class="pf-edit-row">
+                            <input id="pfAbout" type="text">
+                            <button onclick="saveProfile('about')"><i class="fas fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="pf-row">
+                        <label>Telefone</label>
+                        <div id="pfPhone" class="pf-val"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header da sidebar -->
+            <div class="sb-hd">
+                <div id="myAv" class="my-av" onclick="openProfile()"></div>
+                <div class="sb-btns">
+                    <button title="Nova conversa" onclick="openNewChat()"><i class="fas fa-message"></i></button>
+                    <button title="Novo grupo" onclick="openNewGroup()"><i class="fas fa-users"></i></button>
+                    <button title="Menu" onclick="toggleDrop('mainDrop',event)"><i class="fas fa-ellipsis-vertical"></i></button>
+                </div>
+                <div class="drop" id="mainDrop" style="display:none">
+                    <div onclick="openNewGroup()"><i class="fas fa-users"></i>Novo grupo</div>
+                    <div onclick="openProfile()"><i class="fas fa-gear"></i>Configurações</div>
+                    <div onclick="doLogout()" class="drop-danger"><i class="fas fa-right-from-bracket"></i>Sair</div>
+                </div>
+            </div>
+
+            <!-- Busca -->
+            <div class="sb-search">
+                <div class="search-inp">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input type="text" id="srchInput" placeholder="Pesquisar..." oninput="doSearch(this.value)">
+                    <button id="srchClear" style="display:none" onclick="clearSearch()"><i class="fas fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="sb-tabs">
+                <button class="stab active" data-f="all" onclick="setFilter('all',this)">Todas</button>
+                <button class="stab" data-f="unread" onclick="setFilter('unread',this)">Não lidas</button>
+                <button class="stab" data-f="groups" onclick="setFilter('groups',this)">Grupos</button>
+            </div>
+
+            <!-- Lista de chats -->
+            <div class="chat-list" id="chatList"></div>
+        </div>
+
+        <!-- ÁREA PRINCIPAL -->
+        <div class="main-area" id="mainArea">
+
+            <!-- Estado vazio -->
+            <div class="empty-state" id="emptyState">
+                <i class="fab fa-whatsapp"></i>
+                <h2>ZapChat Web</h2>
+                <p>Envie e receba mensagens em tempo real.<br>Selecione uma conversa ou inicie uma nova.</p>
+                <button onclick="openNewChat()"><i class="fas fa-message"></i> Nova conversa</button>
+            </div>
+
+            <!-- Chat ativo -->
+            <div class="chat-screen" id="chatScreen" style="display:none">
+
+                <!-- Header do chat -->
+                <div class="chat-hd">
+                    <button class="back-mob" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
+                    <div id="chatHdAv" class="chat-av" onclick="openInfo()"></div>
+                    <div class="chat-hd-info" onclick="openInfo()">
+                        <div id="chatHdName" class="chat-hd-name"></div>
+                        <div id="chatHdSt" class="chat-hd-st"></div>
+                    </div>
+                    <div class="chat-hd-btns">
+                        <button onclick="openSearchInChat()"><i class="fas fa-magnifying-glass"></i></button>
+                        <button onclick="toggleDrop('chatDrop',event)"><i class="fas fa-ellipsis-vertical"></i></button>
+                    </div>
+                    <div class="drop" id="chatDrop" style="display:none">
+                        <div onclick="openInfo()"><i class="fas fa-circle-info"></i>Info</div>
+                        <div onclick="muteChat()"><i class="fas fa-bell-slash"></i>Silenciar</div>
+                        <div onclick="clearChatMsgs()"><i class="fas fa-broom"></i>Limpar</div>
+                        <div onclick="deleteCurrentChat()" class="drop-danger"><i class="fas fa-trash"></i>Apagar</div>
+                    </div>
+                </div>
+
+                <!-- Barra de busca no chat -->
+                <div class="in-chat-search" id="inChatSearch" style="display:none">
+                    <input type="text" id="chatSrchIn" placeholder="Pesquisar na conversa..." oninput="searchInsideChat(this.value)">
+                    <span id="chatSrchInfo"></span>
+                    <button onclick="closeSearchInChat()"><i class="fas fa-xmark"></i></button>
+                </div>
+
+                <!-- Mensagens -->
+                <div class="msgs-box" id="msgsBox"></div>
+
+                <!-- Botão scroll -->
+                <button class="scroll-dn" id="scrollDn" onclick="scrollToBottom(true)" style="display:none">
+                    <i class="fas fa-chevron-down"></i>
+                    <span class="scroll-badge" id="scrollBadge" style="display:none"></span>
+                </button>
+
+                <!-- Barra de resposta -->
+                <div class="reply-strip" id="replyStrip" style="display:none">
+                    <div class="reply-content">
+                        <b id="replyWho"></b>
+                        <span id="replyWhat"></span>
+                    </div>
+                    <button onclick="cancelReply()"><i class="fas fa-xmark"></i></button>
+                </div>
+
+                <!-- Input -->
+                <div class="input-strip">
+                    <button class="in-icon" onclick="toggleEmoji()"><i class="far fa-face-smile"></i></button>
+                    <button class="in-icon" onclick="toggleAttach()"><i class="fas fa-paperclip"></i></button>
+                    <div class="txt-area">
+                        <textarea id="msgTxt" placeholder="Mensagem" rows="1"
+                            oninput="onMsgInput(this)"
+                            onkeydown="onMsgKey(event)"></textarea>
+                    </div>
+                    <button class="in-icon send-icon" id="sendBtn" onclick="sendMsg()">
+                        <i class="fas fa-microphone" id="sendIco"></i>
+                    </button>
+                </div>
+
+                <!-- Emoji Picker -->
+                <div class="emoji-picker" id="emojiPicker" style="display:none">
+                    <div class="ep-search">
+                        <input type="text" placeholder="Pesquisar emoji..." oninput="searchEmojis(this.value)">
+                    </div>
+                    <div class="ep-tabs" id="epTabs">
+                        <button class="ep-tab active" onclick="showEmojiCat('smileys',this)">😀</button>
+                        <button class="ep-tab" onclick="showEmojiCat('people',this)">👋</button>
+                        <button class="ep-tab" onclick="showEmojiCat('animals',this)">🐶</button>
+                        <button class="ep-tab" onclick="showEmojiCat('food',this)">🍔</button>
+                        <button class="ep-tab" onclick="showEmojiCat('travel',this)">✈️</button>
+                        <button class="ep-tab" onclick="showEmojiCat('objects',this)">💡</button>
+                        <button class="ep-tab" onclick="showEmojiCat('symbols',this)">❤️</button>
+                    </div>
+                    <div class="ep-grid" id="epGrid"></div>
+                </div>
+
+                <!-- Attach Menu -->
+                <div class="attach-menu" id="attachMenu" style="display:none">
+                    <div class="att-item" onclick="pickPhoto()">
+                        <div class="att-ico" style="background:#7c5cfc"><i class="fas fa-image"></i></div>
+                        <span>Fotos</span>
+                    </div>
+                    <div class="att-item" onclick="pickDoc()">
+                        <div class="att-ico" style="background:#5157ae"><i class="fas fa-file"></i></div>
+                        <span>Documento</span>
+                    </div>
+                    <div class="att-item" onclick="sendLocation()">
+                        <div class="att-ico" style="background:#1fa855"><i class="fas fa-location-dot"></i></div>
+                        <span>Localização</span>
+                    </div>
+                    <div class="att-item" onclick="pickPhoto()">
+                        <div class="att-ico" style="background:#0795dc"><i class="fas fa-camera"></i></div>
+                        <span>Câmera</span>
+                    </div>
+                </div>
+
+                <!-- Painel Info -->
+                <div class="info-panel" id="infoPanel" style="display:none">
+                    <div class="slide-hd">
+                        <button onclick="closeInfo()"><i class="fas fa-xmark"></i></button>
+                        <span id="infoTitle">Info</span>
+                    </div>
+                    <div class="slide-bd">
+                        <div class="big-av-wrap">
+                            <div class="big-av" id="infoAv"></div>
+                        </div>
+                        <div class="info-nm" id="infoNm"></div>
+                        <div class="info-ph" id="infoPh"></div>
+                        <div class="pf-row">
+                            <label>Recado</label>
+                            <div class="pf-val" id="infoAb"></div>
+                        </div>
+                        <button class="danger-btn" onclick="deleteCurrentChat()">
+                            <i class="fas fa-trash"></i> Apagar conversa
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAIS -->
+<!-- Nova Conversa -->
+<div class="modal-bg" id="newChatMod" style="display:none">
+    <div class="modal-box">
+        <div class="modal-hd">
+            <h3><i class="fas fa-message"></i> Nova Conversa</h3>
+            <button onclick="closeModal('newChatMod')"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-bd">
+            <div class="search-inp" style="margin-bottom:12px">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar por nome ou telefone..." oninput="filterContacts(this.value)" id="contactSrch">
+            </div>
+            <div class="clist" id="contactList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Novo Grupo -->
+<div class="modal-bg" id="newGroupMod" style="display:none">
+    <div class="modal-box">
+        <div class="modal-hd">
+            <h3><i class="fas fa-users"></i> Novo Grupo</h3>
+            <button onclick="closeModal('newGroupMod')"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-bd">
+            <div class="fld"><label>Nome do grupo *</label><input type="text" id="grpNm" placeholder="Nome do grupo"></div>
+            <div class="fld"><label>Descrição</label><input type="text" id="grpDesc" placeholder="Opcional"></div>
+            <div class="fld">
+                <label>Participantes</label>
+                <div class="search-inp">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Buscar contatos..." oninput="filterGrpContacts(this.value)">
+                </div>
+            </div>
+            <div class="chips-area" id="grpChips"></div>
+            <div class="clist" id="grpContactList"></div>
+            <div class="modal-ft">
+                <button class="btn-gray" onclick="closeModal('newGroupMod')">Cancelar</button>
+                <button class="btn-green" onclick="createGroup()">Criar Grupo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Encaminhar -->
+<div class="modal-bg" id="fwdMod" style="display:none">
+    <div class="modal-box">
+        <div class="modal-hd">
+            <h3><i class="fas fa-share"></i> Encaminhar para...</h3>
+            <button onclick="closeModal('fwdMod')"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-bd">
+            <div class="clist" id="fwdList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Menu de Contexto -->
+<div class="ctx-menu" id="ctxMenu" style="display:none">
+    <div onclick="replyMsg()"><i class="fas fa-reply"></i> Responder</div>
+    <div onclick="copyMsg()"><i class="fas fa-copy"></i> Copiar</div>
+    <div onclick="fwdMsg()"><i class="fas fa-share"></i> Encaminhar</div>
+    <div onclick="starMsg()"><i class="fas fa-star"></i> Favoritar</div>
+    <div onclick="deleteMsg()" class="ctx-danger"><i class="fas fa-trash"></i> Apagar</div>
+</div>
+
+<!-- Visualizador de imagem -->
+<div class="img-viewer" id="imgViewer" style="display:none">
+    <button onclick="closeViewer()"><i class="fas fa-xmark"></i></button>
+    <img id="viewerImg" src="">
+</div>
+
+<!-- Notificações -->
+<div class="toast-area" id="toastArea"></div>
+
+<!-- Inputs ocultos -->
+<input type="file" id="imgFile" accept="image/*" style="display:none" onchange="handleImgFile(event)">
+<input type="file" id="docFile" style="display:none" onchange="handleDocFile(event)">
+<input type="file" id="avFile" accept="image/*" style="display:none" onchange="handleAvFile(event)">
+
+<script src="script.js"></script>
+</body>
+</html>
